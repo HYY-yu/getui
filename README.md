@@ -6,7 +6,7 @@
 
 功能特色：
 
-- 杜绝map[string]interface{}，请求、返回都封装结构体，使用上更清晰
+- 杜绝`map[string]interface{}`，请求、返回都封装结构体，使用上更清晰
 - Cache的依赖倒置，可以兼容不同的缓存实现
 - 对error的统一处理
 - 易于使用的API设计
@@ -16,7 +16,7 @@
 使用方法
 ---
 
-```
+```golang
     resp,err := NewGetui(GeTuiConig{}).ToSingleCid(
 			&Req{
 				RequestId: "xxxxx",
