@@ -245,3 +245,64 @@ func (g *Getui) ToAppCustomTag(req *Req) (taskId string, resp *Resp, err error) 
 	}
 	return "", resp, fmt.Errorf("error format resp : %v", resp)
 }
+
+// 停止任务
+func (g *Getui) StopTask(taskId string) (*Resp, error) {
+	if len(taskId) == 0 {
+		return nil, errors.New("taskId is empty")
+	}
+
+	resp, err := Do("DELETE", g.url(fmt.Sprintf("task/%s", taskId)), g.token(), nil)
+	if err != nil {
+		g.err = append(g.err, err)
+		return nil, g.hasError()
+	}
+	return resp, nil
+}
+
+// 查询任务
+type QueryRespData struct {
+	CreateTime          int64  `json:"create_time"`
+	Status              string `json:"status"`
+	TransmissionContent string `json:"transmission_content"`
+	PushTime            int64  `json:"push_time"`
+}
+
+func (g *Getui) QueryTask(taskId string) (*QueryRespData, *Resp, error) {
+	if len(taskId) == 0 {
+		return nil, nil, errors.New("taskId is empty")
+	}
+
+	resp, err := Do("GET", g.url(fmt.Sprintf("task/schedule/%s", taskId)), g.token(), nil)
+	if err != nil {
+		g.err = append(g.err, err)
+		return nil, nil, g.hasError()
+	}
+
+	if v, ok := resp.Data[taskId]; ok {
+		if vv, ok := v.(map[string]interface{}); ok {
+			qData := &QueryRespData{
+				CreateTime:          cast.ToInt64(vv["create_time"]),
+				Status:              cast.ToString(vv["status"]),
+				TransmissionContent: cast.ToString(vv["transmission_content"]),
+				PushTime:            cast.ToInt64(vv["push_time"]),
+			}
+			return qData, resp, nil
+		}
+	}
+	return nil, resp, errors.New("can't find query resp data")
+}
+
+// 删除定时任务
+func (g *Getui) DeleteClockTask(taskId string) (*Resp, error) {
+	if len(taskId) == 0 {
+		return nil, errors.New("taskId is empty")
+	}
+
+	resp, err := Do("DELETE", g.url(fmt.Sprintf("task/schedule/%s", taskId)), g.token(), nil)
+	if err != nil {
+		g.err = append(g.err, err)
+		return nil, g.hasError()
+	}
+	return resp, nil
+}

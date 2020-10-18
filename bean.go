@@ -1,5 +1,6 @@
 package getui
 
+import "errors"
 
 type Resp struct {
 	Code int                    `json:"code"`
@@ -7,10 +8,23 @@ type Resp struct {
 	Data map[string]interface{} `json:"data,omitempty"`
 }
 
+func (r *Resp) GetTaskId() (string, error) {
+	if r.Data == nil {
+		return "", errors.New("no data")
+	}
+
+	for k := range r.Data {
+		if len(k) > 0 {
+			return k, nil
+		}
+	}
+	return "", nil
+}
+
 //http://docs.getui.com/getui/server/rest_v2/push/
 // 使用时对照个推文档
 
-// omitempty 代表此参数是可选的
+// omitempty 代表此参数是可选的，或者是二选一，参照文档
 
 type Req struct {
 	RequestId   string       `json:"request_id"`
@@ -49,20 +63,27 @@ type PushMessage struct {
 }
 
 type Notification struct {
-	Title        string `json:"title"`
-	Body         string `json:"body"`
-	ClickType    string `json:"click_type"`
-	BigText      string `json:"big_text,omitempty"`
-	BigImage     string `json:"big_image,omitempty"`
-	Logo         string `json:"logo,omitempty"`
-	LogoUrl      string `json:"logo_url,omitempty"`
-	ChannelId    string `json:"channel_id,omitempty"`
-	ChannelName  string `json:"channel_name,omitempty"`
-	ChannelLevel string `json:"channel_level,omitempty"`
-	Intent       string `json:"intent,omitempty"`
-	Url          string `json:"url,omitempty"`
-	Payload      string `json:"payload,omitempty"`
-	NotifyId     int    `json:"notify_id,omitempty"`
+	Title        string    `json:"title"`
+	Body         string    `json:"body"`
+	ClickType    string    `json:"click_type"`
+	BigText      string    `json:"big_text,omitempty"`
+	BigImage     string    `json:"big_image,omitempty"`
+	Logo         string    `json:"logo,omitempty"`
+	LogoUrl      string    `json:"logo_url,omitempty"`
+	ChannelId    string    `json:"channel_id,omitempty"`
+	ChannelName  string    `json:"channel_name,omitempty"`
+	ChannelLevel string    `json:"channel_level,omitempty"`
+	Intent       string    `json:"intent,omitempty"`
+	Url          string    `json:"url,omitempty"`
+	Payload      string    `json:"payload,omitempty"`
+	NotifyId     int       `json:"notify_id,omitempty"`
+	Options      []Options `json:"options,omitempty"`
+}
+
+type Options struct {
+	Key        string      `json:"key"`
+	Value      interface{} `json:"value"`
+	Constraint string      `json:"constraint,omitempty"`
 }
 
 // 厂商通道消息内容
@@ -71,9 +92,13 @@ type PushChannel struct {
 	Android *Android `json:"android,omitempty"`
 }
 
-// TODO 可以继续展开
 type Android struct {
-	Ups map[string]interface{} `json:"ups,omitempty"`
+	Ups Ups `json:"ups"`
+}
+
+type Ups struct {
+	Notification *Notification `json:"notification,omitempty"`
+	Transmission string        `json:"transmission,omitempty"`
 }
 
 type IOS struct {
