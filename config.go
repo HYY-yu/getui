@@ -1,5 +1,6 @@
 package getui
 
+// Config配置
 type GeTuiConfig struct {
 	appId        string
 	appKey       string

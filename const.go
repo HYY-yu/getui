@@ -5,6 +5,7 @@ import (
 )
 
 const (
+	// BaseUrl
 	BaseUrl = "https://restapi.getui.com/v2/%s/%s"
 )
 

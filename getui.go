@@ -9,6 +9,11 @@ import (
 	"github.com/spf13/cast"
 )
 
+var (
+	// 请求ID长度限制[10,32]
+	ErrorRequestIdLen = errors.New(" must have request_id, and the length of request_id in [10,32] ")
+)
+
 //http://docs.getui.com/getui/server/rest_v2/push/
 // 使用时对照个推文档
 /*
@@ -30,11 +35,6 @@ import (
 	}
 
 */
-
-var (
-	ErrorRequestIdLen = errors.New(" must have request_id, and the length of request_id in [10,32] ")
-)
-
 type Getui struct {
 	con *GeTuiConfig
 	err Error
@@ -42,6 +42,7 @@ type Getui struct {
 	cache Cache
 }
 
+// 新建Getui实例
 func NewGetui(con *GeTuiConfig) *Getui {
 	// 检查配置
 	if len(con.appId) == 0 {
@@ -56,12 +57,13 @@ func NewGetui(con *GeTuiConfig) *Getui {
 	}
 }
 
+// SetCache 设置缓存器
 func (g *Getui) SetCache(c Cache) *Getui {
 	g.cache = c
 	return g
 }
 
-// 删除Token
+// DeleteToken 删除Token，同时删除缓存的token
 func (g *Getui) DeleteToken(token string) error {
 	if g.cache != nil {
 		err := g.cache.Delete()
