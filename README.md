@@ -1,5 +1,6 @@
 个推 golangSDK
 ---
+[![Go Report Card](https://goreportcard.com/badge/github.com/HYY-yu/getui)](https://goreportcard.com/report/github.com/HYY-yu/getui)
 
 封装个推Rest API版本V2，目前github上的sdk都比较老，而且不是v2版本。故此实现一个。   
 `https://restapi.getui.com/v2`   
